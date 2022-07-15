@@ -1,5 +1,7 @@
 "use strict";
 
+const UserStroage = require("../../models/UserStorage")
+
 const output = {
     home: (req, res) => {
         res.render("home/index");
@@ -9,28 +11,26 @@ const output = {
     },
 };
 
-const users = {
-    id: ["1", "2", "3"],
-    passwd: ["4", "5", "6"],
-};
 
 const process = {
     login: (req, res) => {
         const id = req.body.id,
             passwd = req.body.passwd;
 
+        const users = UserStroage.getUsers("id", "passwd");
+        
+        const response = {};
         if (users.id.includes(id)) {
             const idx = users.id.indexOf(id);
             if (users.passwd[idx] === passwd) {
-                return res.json({
-                    success: true,
-                });
+                response.success = true;
+                return res.json(response);
             }
         }
-        return res.json({
-            success: false,
-            msg: "login flase",
-        });
+
+        response.success = false;
+        response.msg = "login flase";
+        return res.json(response);
     },
 };
 
