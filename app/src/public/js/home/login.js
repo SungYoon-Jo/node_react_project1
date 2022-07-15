@@ -13,5 +13,11 @@ const id = document.querySelector("#id"),
             passwd: passwd.value,
         };
 
-        fetch();
+        fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/josn"
+            },
+            body: JSON.stringify(req),
+        });
     }
