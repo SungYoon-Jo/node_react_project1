@@ -3,7 +3,7 @@
 const fs = require("fs").promises;
 
 class UserStroage {
-    
+
     static #getUserInfo(data, id) {
         const users = JSON.parse(data);
         const idx = users.id.indexOf(id);
@@ -16,8 +16,10 @@ class UserStroage {
         return userInfo;
     }
 
-    static getUsers(...fields) {
-        // const users = this.#users;
+    static #getUsers(data, isAll, fields) {
+        const users = JSON.parse(data);
+        if (isAll) return users;
+
         const newUsers = fields.reduce((newUsers, filed) => {
             if (users.hasOwnProperty(filed)){
                 newUsers[filed] = users[filed];
@@ -25,6 +27,16 @@ class UserStroage {
             return newUsers;
         }, {});
         return newUsers;
+    }
+
+    static getUsers(isAll, ...fields) {
+        return fs
+        .readFile("./src/databases/users.json")
+        .then((data) => {
+            return this.#getUsers(data, isAll, fields);
+        })
+        .catch(console.error);
+
     }
 
     static getUserInfo(id) {
@@ -37,11 +49,15 @@ class UserStroage {
 
     }
 
-    static save(userInfo) {
-        // const users = this.#users;
+    static async save(userInfo) {
+        const users = await this.getUsers(true);
+        if (users.id.includes(userInfo.id)) {
+            throw "이미 존재하는 아이디입니다.";
+        }
         users.id.push(userInfo.id);
         users.name.push(userInfo.name);
         users.passwd.push(userInfo.passwd);
+        fs.writeFile("./src/databases/users.json",JSON.stringify(users));
         return { success: true };
     }
 }
