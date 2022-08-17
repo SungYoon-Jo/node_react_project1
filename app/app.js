@@ -1,19 +1,20 @@
 "use strict";
 
+// 모듈
 const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const morgan = require('morgan');
-
+dotenv.config();
 
 
 const app = express();
-dotenv.config();
-
-const home = require("./src/routes/home");
-
 const accessLogStream = require("./src/config/log")
 
+// 라우팅
+const home = require("./src/routes/home");
+
+// 앱 세팅
 app.set("views", "./src/views");
 app.set("view engine", "ejs");
 
